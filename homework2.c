@@ -15,6 +15,21 @@ int palindrome_iter(const char *w, int n) {
   }
 }
 
+/*
+int palindrome_iter2(const char *w, int n) {
+  int i = 0;
+
+  while (i < n && w[i] == w[n-i-1] && i < n-i-1) {
+    i++;
+  }
+  if (i < n / 2) {
+    return 0;
+  } else {
+    return 1;
+  }
+}
+*/
+
 int palindrome_rec(const char *w, int i, int j) {
   if (i >= j) {
     return 1;
