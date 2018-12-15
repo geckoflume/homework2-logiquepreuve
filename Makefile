@@ -10,5 +10,9 @@ homework2: homework2.c
 run: homework2
 	./homework2 radar 0 5
 
+adhoc: palindrome.wp palindrome2.wp
+	./adhoc/adhoc palindrome.wp
+	./adhoc/adhoc palindrome2.wp
+
 clean:
 	rm -f homework2
