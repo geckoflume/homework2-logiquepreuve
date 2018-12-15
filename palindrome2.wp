@@ -1,0 +1,11 @@
+%precond: n>=0
+i := 0; palindrome := true;
+while (i < n /\ palindrome) do
+  if (w(i) != w(n-i-1)) then
+    palindrome := false
+  else
+    i := i+1
+  endif
+endwhile;
+return := palindrome
+%postcond: return <-> al k . (0 <= k < n -> w(k)=w(n-k-1))

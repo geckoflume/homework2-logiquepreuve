@@ -1,0 +1,11 @@
+%precond: n>=0
+i := 0;
+while (i < n /\ w(i)=w(n-i-1)) do
+  i := i+1
+endwhile;
+if (i<n) then
+  return := false
+else
+  return := true
+endif
+%postcond: return <-> al k . (0 <= k < n -> w(k)=w(n-k-1))
