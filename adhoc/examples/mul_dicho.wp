@@ -1,0 +1,14 @@
+%precond: Nat(b)
+p:=0; a':=a; b':=b;
+while (b'>0) do
+	%invariant: (a*b=p+a'*b')/\(Nat(b'))
+	%variant: b'
+	if (b'%2 = 1) then
+		p:=p+a'
+	else
+		skip
+	endif;
+	a':=a'*2;
+	b':=b'/2
+endwhile
+%postcond: p=a*b

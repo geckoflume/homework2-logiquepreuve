@@ -1,0 +1,12 @@
+/* 
+Fonction factorielle
+*/
+%precond: Nat(n) /\ true
+i := 1; 
+f := 1;
+while (i<=n) do
+	%invariant: (i<=n+1) /\ (f=fact(i-1))
+	f := f*i;
+	i := i+1;
+endwhile
+%postcond: f=fact(n)

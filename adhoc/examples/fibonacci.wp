@@ -1,0 +1,19 @@
+/* 
+  Suite de Fibonacci 
+
+  Version corrigée en changeant la condition de la boucle.
+*/
+%precond: Nat(n)
+x := 0;
+if (n != 0) then 
+	y := x; x := 1; k := 1;
+	while (k < n) do
+		%invariant: k < n+1 /\ x = fibo(k) /\ y = fibo(k-1)
+		%variant: n-k
+		t := y; 
+		y := x; 
+		x := x+t;
+		k := k+1
+	endwhile
+endif
+%postcond: x = fibo(n)

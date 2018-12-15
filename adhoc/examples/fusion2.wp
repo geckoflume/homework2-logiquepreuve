@@ -1,0 +1,35 @@
+%precond: trie(f1) /\ trie(f2)
+f := fichier_vide; f1' := f1; f2' := f2;
+while (reste_elmt(f1') /\ reste_elmt(f2')) do
+  %invariant: trie(f1') /\ trie(f2') /\ trie(f)
+	/\ (dernier(f)<=lire(f1')) /\ (dernier(f)<=lire(f2'))
+	/\ (elmts(f1)+elmts(f2)=elmts(f)+elmts(f1')+elmts(f2'))
+  %variant: nb_elmts(f1')+nb_elmts(f2')
+  if (lire(f1') < lire(f2')) then
+    f := ecrire(f,lire(f1'));
+    f1' := avancer(f1')
+  else
+    f := ecrire(f,lire(f2'));
+    f2' := avancer(f2')
+  endif
+endwhile;
+if (reste_elmt(f1')) then
+  while (reste_elmt(f1')) do
+    %invariant: trie(f1') /\ trie(f)
+  	  /\ (dernier(f)<=lire(f1'))
+	  /\ (elmts(f1)+elmts(f2)=elmts(f)+elmts(f1'))
+    %variant: nb_elmts(f1')
+    f := ecrire(f,lire(f1'));
+    f1' := avancer(f1')
+  endwhile
+else
+  while (reste_elmt(f2')) do
+    %invariant: trie(f2') /\ trie(f)
+	  /\ (dernier(f)<=lire(f2'))
+	  /\ (elmts(f1)+elmts(f2)=elmts(f)+elmts(f2'))
+    %variant: nb_elmts(f2')
+    f := ecrire(f,lire(f2'));
+    f2' := avancer(f2')
+  endwhile
+endif
+%postcond: trie(f) /\ (elmts(f)=elmts(f1)+elmts(f2))

@@ -1,0 +1,22 @@
+/* Sum of the products of the N first integers
+ */
+%precond: Nat(N)
+s := 0;
+i := 1;
+while (i <= N) do
+  %invariant: s=sum(k=1->i-1,prod(1,m,k,m)) /\ (i<=N+1) /\ Nat(i)
+  %variant: N-i+1
+  p := 1;
+  j := 1;
+  while (j <= i) do
+    %invariant: p=prod(1,k,j-1,k) /\ (j<=i+1) /\ Nat(j)
+      /\ s=sum(1,k,i-1,prod(1,m,k,m)) /\ (i<=N) /\ Nat(i)
+      /\ (N-i<val1) /\ wfs(N-i)
+    %variant: i-j+1
+    p := p*j;
+    j := j+1
+  endwhile;
+  s := s + p;
+  i := i + 1
+endwhile
+%postcond: s=sum(k=1->N,prod(1,p,k,p))

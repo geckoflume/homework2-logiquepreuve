@@ -1,0 +1,20 @@
+/* Sum of matrices : C=A+B
+ * All the matrices are assumed to be N*M
+ */
+i := 1;
+while (i <= N) do
+  %invariant: al k.al h.((1<=k)/\(k<i)/\(1<=h)/\(h<=M))->
+	get(C,k,h)=get(A,k,h)+get(B,k,h) /\ (2<=i/\i<=N+1)
+  %variant: N-i+1
+  j := 1;
+  while (j <= M) do
+    %invariant: al h.((1<=h)/\(h<j))->get(C,i,h)=get(A,i,h)+get(B,i,h)
+    /\ (2<=j/\j<=M+1)
+    %variant: M-j+1
+    C := set(C,i,j,get(A,i,j)+get(B,i,j));
+    j := j+1
+  endwhile;
+  i := i+1
+endwhile
+%postcond: al k. al h. (1<=k/\k<=N/\1<=h/\h<=M)->get(C,k,h)=get(A,k,h)+get(B,k,h)
+

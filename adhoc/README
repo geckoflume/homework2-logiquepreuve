@@ -1,0 +1,198 @@
+ADHOC - Frédéric Herbreteau & David Renault (Bordeaux INP)
+Licence: domaine public
+----------------------------------------------------------
+
+ADHOC (Automatic Derivation in the HOare Calculus) est un programme de
+calcul de preuve en logique de Hoare. Il nécessite un algorithme, une
+pré-condition et une post-condition d'une part, et un invariant et un
+variant pour chacune des boucles de l'algorithme d'autre part. Il
+calcule alors la preuve et génère des obligations de preuve qui
+conditionnent la correction et la terminaison de l'algorithme.
+
+** Compilation
+
+Pour compiler ADHOC, une version récente d'Objective CAML est
+nécessaire (voir http://caml.inria.fr). Il suffit alors de modifier
+les chemins d'accès aux compilateurs dans le fichier Makefile. La
+compilation génère un fichier exécutable adhoc qu'il suffit d'utiliser
+comme indiqué ci-dessous.
+
+** Mode emacs
+
+Un mode emacs est disponible pour le logiciel ADHOC. Pour l'installer,
+copier le fichier adhoc.el dans un répertoire dédié (par exemple:
+$HOME/local/site-lisp). Puis ajouter les signes suivantes au fichier ~/.emacs
+
+(setq load-path (cons "$HOME/local/site-lisp" load-path))
+(setq auto-mode-alist (cons '("\\.\\(?:hpf\\|wp\\)" . adhoc-mode) auto-mode-alist))
+(autoload 'adhoc-mode "adhoc-mode" "Major mode for ADHOC software" t)
+
+Ce mode emacs fournit la coloration syntaxique, l'indentation du code
+et la reconnaissance des extensions de fichiers d'extension .wp pour
+les while-programs et .hpf pour les preuves.
+
+** Syntaxe des while-programs
+
+ADHOC impose certaines contraintes syntaxiques aux while-programs
+qu'il est capable de traiter:
+
+- Les instructions reconnues sont skip, l'affectation :=, la séquence
+  ; et les structures de choix: if .. then .. else .. endif (else est
+  facultatif) et d'itération while .. do .. endwhile
+
+- Les commentaires sont délimités par /* et */ (comme en langage
+  C). Ils peuvent s'étendre sur plusieurs lignes.
+
+- Pour chaque while-program, il est nécessaire de déclarer une
+  post-condition (après le code). On utilise pour cela le mot-clé
+  "%postcond:". Il est aussi possible de spécifier une pré-condition
+  (avant le code) à l'aide du mot-clé "%precond:"
+
+- Pour chaque boucle while, il est nécessaire de spécifier un
+  invariant indiqué par "%invariant:". Pour réaliser une preuve de
+  terminaison, il est de plus nécessaire de spécifier un variant
+  indiqué par "%variant:". Ces déclarations doivent suivre
+  immédiatement l'instruction "do", l'invariant précédant le variant.
+
+- Les tests des instructions "if" et "while" ainsi que les
+  pré-conditions, post-conditions et invariants sont des formules de
+  la logique du premier ordre.
+
+  . "true" et "false" désignent les formules vrai et faux respectivement
+  
+  . l'opérateur de négation est !, celui de conjonction est /\, la
+  disjonction est \/, l'opérateur d'implication est ->, enfin celui
+  d'équivalence est <->.
+
+  . la quantification existentielle s'écrit "ex x." et l'universelle "al x."
+
+  . Les noms de prédicats peuvent être quelconques (sauf mots
+  réservés). Certains prédicats s'utilisent comme des opérateurs
+  binaires: <=, >=, <, >, =, !=
+
+  . Les noms de fonctions peuvent être quelconques (sauf mots
+  réservés). Certains symboles de fonctions s'utilisent comme des
+  opérateurs binaires: +, -, *, /, % et ^.
+
+  . Les morts suivants sont réservés: wfs, val1, val2,...,skip, if,
+  then else, endif, while, do, endwhile.
+
+
+Voici un exemple de while-program qui calcule la multiplication de a par b (le résultat est placé dans m). Veuillez noter l'emplacement des déclarations
+%precond:, %invariant:, %variant: et %postcond: qui est stricte.
+
+%precond: Nat(b)
+b' := b; m := 0;
+while (b'>0) do
+  %invariant: (a*b=m+a*b')/\(Nat(b'))
+  %variant: b'
+  m := m+a;
+  b' := b'-1
+endwhile
+%postcond: (m=a*b)
+
+
+** Utilisation du logiciel ADHOC
+
+adhoc [-tpqr] [-o out_file] [in_file]
+  -p Turns off program printing
+  -q Turns off proof printing
+  -r Turns off proof obligations printing
+  -t Turns on termination proof
+  -o Defines output file
+  -l Turns on LaTeX printing
+  -d Turns on David printing
+  -help  Display this list of options
+  --help  Display this list of options
+
+ADHOC lit par defaut un while-program sur l'entrée standard et affiche
+la preuve correspondante sur la sortie standard. Il est possible de
+spécifier un fichier d'entrée (in_file) et/ou un fichier de sortie (-o
+out_file) sur la ligne de commande. L'option -t permet de demander à
+adhoc une preuve de terminaison. Attention, celle-ci n'est que
+partiellement automatique pour les boucles imbriquées à les invariants
+de boucles doivent être modifiés pour ternir compte des ajouts d'adhoc
+pour la preuve de terminaison.
+
+Les autres options permettent de configurer la sortie produite par
+l'outil. Par défaut, ADHOC fournit en sortie: le while-program, le
+calcul de preuve et les obligations de preuve. L'option -p empêche
+l'affichage du programme, -q inhibe l'affichage du calcul de preuve,
+enfin -r désactive l'affichage des obligations de preuve. ADHOC
+produit par défaut une sortie en mode texte. Il est possible d'obtenir
+un fichier LaTeX grace à l'option -l.
+
+Supposons que le while-program précédent se trouve enregistré dans le
+fichier prog1.wp. En exécutant la commande suivante:
+
+$ adhoc < prog1.wp > prog1.hpf
+
+ou encore:
+
+$ adhoc prog1.wp -o prog1.hpf
+
+On obtient dans le fichier prog1.hpf une preuve en logique de Hoare du
+while-program avec les informations (pré-condition, post-condition,
+invariants et mesures) fournies par l'utilisateur. Voici la preuve
+correspondant à l'exemple ci-dessus:
+
+WHILE-PROGRAM:
+
+%precond: Nat(b)
+b':=b;
+m:=0;
+while (b'>0) do
+        %invariant: (a*b=m+a*b')/\(Nat(b'))
+        %variant: b'
+        m:=m+a;
+        b':=b'-1
+endwhile
+%postcond: (m=a*b)
+
+
+PROOF:
+
+{Nat(b)}
+[0]
+{(a*b=0+a*b)/\(Nat(b))}
+b':=b
+{(a*b=0+a*b')/\(Nat(b'))}
+;
+{(a*b=0+a*b')/\(Nat(b'))}
+m:=0
+{(a*b=m+a*b')/\(Nat(b'))}
+;
+{(a*b=m+a*b')/\(Nat(b'))}
+while (b'>0) do
+        %invariant: (a*b=m+a*b')/\(Nat(b'))
+        %variant: b'
+        [1]
+        {(a*b=(m+a)+a*(b'-1))/\(Nat((b'-1)))/\((b'-1)< val1)/\(wfs((b'-1)))}
+        m:=m+a
+        {(a*b=m+a*(b'-1))/\(Nat((b'-1)))/\((b'-1)< val1)/\(wfs((b'-1)))}
+        ;
+        {(a*b=m+a*(b'-1))/\(Nat((b'-1)))/\((b'-1)< val1)/\(wfs((b'-1)))}
+        b':=b'-1
+        {(a*b=m+a*b')/\(Nat(b'))/\(b'< val1)/\(wfs(b'))}
+endwhile
+[2]
+{(m=a*b)}
+
+
+PROOF OBLIGATIONS:
+
+        Nat(b)
+[0]     ------------------- implies -------------------
+        (a*b=0+a*b)/\(Nat(b))
+
+        (a*b=m+a*b')/\(Nat(b'))/\(b'>0)/\(b'=val1)/\(wfs(b'))
+[1]     ------------------- implies -------------------
+        (a*b=(m+a)+a*(b'-1))/\(Nat((b'-1)))/\((b'-1)< val1)/\(wfs((b'-1)))
+
+        (a*b=m+a*b')/\(Nat(b'))/\!((b'>0))
+[2]     ------------------- implies -------------------
+        (m=a*b)
+
+
+Il ne reste plus qu'à prouver la validité des obligations de preuve,
+ce qui est le cas ici.

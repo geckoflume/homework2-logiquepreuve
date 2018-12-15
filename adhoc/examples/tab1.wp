@@ -1,0 +1,6 @@
+/* Essai
+*  des commentaires
+*/
+i := 0;
+t := set(t,i,1)
+%postcond: get(t,0)=1

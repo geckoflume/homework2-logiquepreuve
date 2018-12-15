@@ -1,0 +1,12 @@
+/* Multiplication iterative de a par b
+ * Resultat dans m
+ */
+%precond: Nat(b)
+b' := b; m := 0;
+while (b'>0) do
+  %invariant: (a*b=m+a*b')/\(Nat(b'))
+  %variant: b'
+  m := m+a;
+  b' := b'-1
+endwhile
+%postcond: (m=a*b)

@@ -1,0 +1,5 @@
+%precond: (x=Y)/\(y=X)
+z:=x;
+x:=y;
+y:=z
+%postcond: (x=X)/\(y=Y)
