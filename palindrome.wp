@@ -1,7 +1,7 @@
 %precond: n>=0
 i := 0;
 while (i < n /\ w(i)=w(n-i-1)) do
-  %invariant: (i<=n) /\ (i>=0)
+  %invariant: al k . (0 <= k < i -> w(k)=w(n-k-1))
   i := i+1
 endwhile;
 if (i<n) then

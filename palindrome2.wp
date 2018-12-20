@@ -1,6 +1,7 @@
 %precond: n>=0
 i := 0; palindrome := true;
 while (i < n /\ palindrome) do
+  %invariant: (i <= n) /\ (al k. (0 <= k < i -> w(k)=w(n-k-1))) /\ (!palindrome -> (w(i)!=w(n-i-1)) )
   if (w(i) != w(n-i-1)) then
     palindrome := false
   else
